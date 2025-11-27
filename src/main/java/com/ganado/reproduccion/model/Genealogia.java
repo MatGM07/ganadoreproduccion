@@ -8,38 +8,31 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "nacimientos")
+@Table(name = "genealogias")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Nacimiento {
+public class Genealogia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.BINARY)
     private UUID id;
 
-    @Column(name = "id_gestacion", nullable = false)
+    @Column(name = "id_madre", nullable = false)
     @JdbcTypeCode(SqlTypes.BINARY)
-    private UUID idGestacion;
+    private UUID idMadre;
 
-    @Column(nullable = false)
-    private LocalDate fecha;
-
-    @Column(name = "id_animal", nullable = false)
+    @Column(name = "id_padre")
     @JdbcTypeCode(SqlTypes.BINARY)
-    private UUID idAnimal;
+    private UUID idPadre; // opcional
 
-    @Column(nullable = false)
-    private Double peso;
-
-    @Column(nullable = false)
-    private String sexo; // MACHO / HEMBRA
-
-    private String observaciones;
+    @Column(name = "id_hijo", nullable = false)
+    @JdbcTypeCode(SqlTypes.BINARY)
+    private UUID idHijo;
 }
+

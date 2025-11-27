@@ -11,35 +11,33 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDate;
 import java.util.UUID;
 
+
 @Entity
-@Table(name = "nacimientos")
+@Table(name = "montas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Nacimiento {
+public class Monta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.BINARY)
     private UUID id;
 
-    @Column(name = "id_gestacion", nullable = false)
+    @Column(name = "id_hembra", nullable = false)
     @JdbcTypeCode(SqlTypes.BINARY)
-    private UUID idGestacion;
+    private UUID idHembra;
+
+    @Column(name = "id_macho")
+    @JdbcTypeCode(SqlTypes.BINARY)
+    private UUID idMacho;
 
     @Column(nullable = false)
     private LocalDate fecha;
 
-    @Column(name = "id_animal", nullable = false)
-    @JdbcTypeCode(SqlTypes.BINARY)
-    private UUID idAnimal;
-
     @Column(nullable = false)
-    private Double peso;
+    private String metodoUtilizado;
 
-    @Column(nullable = false)
-    private String sexo; // MACHO / HEMBRA
-
-    private String observaciones;
+    private String notas;
 }

@@ -12,12 +12,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "nacimientos")
+@Table(name = "diagnosticos_gestacion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Nacimiento {
+public class DiagnosticoGestacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,18 +28,17 @@ public class Nacimiento {
     @JdbcTypeCode(SqlTypes.BINARY)
     private UUID idGestacion;
 
+    @Column(name = "id_hembra", nullable = false)
+    @JdbcTypeCode(SqlTypes.BINARY)
+    private UUID idHembra;
+
     @Column(nullable = false)
     private LocalDate fecha;
 
-    @Column(name = "id_animal", nullable = false)
-    @JdbcTypeCode(SqlTypes.BINARY)
-    private UUID idAnimal;
-
     @Column(nullable = false)
-    private Double peso;
+    private String resultado; // POSITIVO / NEGATIVO
 
-    @Column(nullable = false)
-    private String sexo; // MACHO / HEMBRA
+    private LocalDate fechaEsperadaDeParto;
 
     private String observaciones;
 }

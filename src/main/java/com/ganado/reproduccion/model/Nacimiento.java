@@ -30,7 +30,7 @@ public class Nacimiento {
     @Column(nullable = false)
     private LocalDate fecha;
 
-    private String sexo; // MACHO / HEMBRA
+    private String sexo;
 
     private Double peso;
 

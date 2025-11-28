@@ -1,13 +1,7 @@
 package com.ganado.reproduccion.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
+import lombok.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -20,33 +14,22 @@ import java.util.UUID;
 public class Nacimiento {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
     @Column(nullable = false)
-    private UUID idGestacion;
-
-    @Column(nullable = false)
-    private LocalDate fecha;
-
-    @Column(nullable = false)
-    private UUID idAnimal;   // viene del microservicio de animales
+    private UUID idMonta;
 
     @Column(nullable = false)
     private UUID idMadre;
 
     @Column(nullable = false)
-    private UUID idPadre;
+    private LocalDate fecha;
+
+    private String sexo; // MACHO / HEMBRA
 
     private Double peso;
 
-    @Enumerated(EnumType.STRING)
-    private Sexo sexo;
-
     private String observaciones;
-
-    public enum Sexo {
-        MACHO,
-        HEMBRA
-    }
 }

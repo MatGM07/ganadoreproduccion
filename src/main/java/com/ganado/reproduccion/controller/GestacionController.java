@@ -2,7 +2,6 @@ package com.ganado.reproduccion.controller;
 
 import com.ganado.reproduccion.dto.GestacionRequest;
 import com.ganado.reproduccion.dto.GestacionResponseDTO;
-import com.ganado.reproduccion.model.Gestacion;
 import com.ganado.reproduccion.service.GestacionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,43 +17,45 @@ public class GestacionController {
 
     private final GestacionService gestacionService;
 
+    // Crear gestación
     @PostMapping
     public ResponseEntity<GestacionResponseDTO> crearGestacion(@RequestBody GestacionRequest request) {
-        Gestacion gestacion = gestacionService.crearGestacion(request);
-
-        GestacionResponseDTO response = new GestacionResponseDTO();
-        response.setId(gestacion.getId());
-        response.setIdMonta(gestacion.getIdMonta());
-        response.setIdHembra(gestacion.getIdHembra());
-        response.setFechaInicio(gestacion.getFechaInicio());
-        response.setFechaEstimadaParto(gestacion.getFechaEstimadaParto());
-        response.setEstado(gestacion.getEstado());
-
+        GestacionResponseDTO response = gestacionService.crearGestacion(request);
         return ResponseEntity.ok(response);
     }
 
+    // Listar todas las gestaciones
     @GetMapping
-    public List<Gestacion> listarTodas() {
-        return gestacionService.listarTodas();
+    public ResponseEntity<List<GestacionResponseDTO>> listarTodas() {
+        List<GestacionResponseDTO> gestaciones = gestacionService.listarTodas();
+        return ResponseEntity.ok(gestaciones);
     }
 
+    // Buscar gestación por ID
     @GetMapping("/{id}")
-    public Gestacion buscarPorId(@PathVariable UUID id) {
-        return gestacionService.buscarPorId(id);
+    public ResponseEntity<GestacionResponseDTO> buscarPorId(@PathVariable UUID id) {
+        GestacionResponseDTO gestacion = gestacionService.buscarPorId(id);
+        return ResponseEntity.ok(gestacion);
     }
 
+    // Buscar gestaciones por hembra
     @GetMapping("/hembra/{idHembra}")
-    public List<Gestacion> buscarPorHembra(@PathVariable UUID idHembra) {
-        return gestacionService.buscarPorHembra(idHembra);
+    public ResponseEntity<List<GestacionResponseDTO>> buscarPorHembra(@PathVariable UUID idHembra) {
+        List<GestacionResponseDTO> gestaciones = gestacionService.buscarPorHembra(idHembra);
+        return ResponseEntity.ok(gestaciones);
     }
 
+    // Actualizar gestación
     @PutMapping("/{id}")
-    public Gestacion actualizar(@PathVariable UUID id, @RequestBody Gestacion gestacionActualizada) {
-        return gestacionService.actualizar(id, gestacionActualizada);
+    public ResponseEntity<GestacionResponseDTO> actualizar(@PathVariable UUID id, @RequestBody GestacionRequest request) {
+        GestacionResponseDTO actualizado = gestacionService.actualizar(id, request);
+        return ResponseEntity.ok(actualizado);
     }
 
+    // Eliminar gestación
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable UUID id) {
+    public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
         gestacionService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }

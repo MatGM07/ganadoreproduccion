@@ -19,31 +19,31 @@ public class MontaController {
     private final MontaService montaService;
 
     @PostMapping
-    public ResponseEntity<Monta> registrarMonta(@RequestBody MontaRequest request) {
-        Monta monta = montaService.registrarMonta(request);
-        return ResponseEntity.ok(monta);
+    public ResponseEntity<MontaResponseDTO> crearMonta(@RequestBody MontaRequest request) {
+        MontaResponseDTO response = montaService.registrarMonta(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MontaResponseDTO> obtenerPorId(@PathVariable UUID id) {
-        return ResponseEntity.ok(montaService.obtenerPorId(id));
+        MontaResponseDTO response = montaService.obtenerPorId(id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<List<MontaResponseDTO>> obtenerTodos() {
-        return ResponseEntity.ok(montaService.obtenerTodos());
+        List<MontaResponseDTO> responseList = montaService.obtenerTodos();
+        return ResponseEntity.ok(responseList);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MontaResponseDTO> actualizar(
-            @PathVariable UUID id,
-            @RequestBody MontaRequest request
-    ) {
-        return ResponseEntity.ok(montaService.actualizarMonta(id, request));
+    public ResponseEntity<MontaResponseDTO> actualizarMonta(@PathVariable UUID id, @RequestBody MontaRequest request) {
+        MontaResponseDTO response = montaService.actualizarMonta(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
+    public ResponseEntity<Void> eliminarMonta(@PathVariable UUID id) {
         montaService.eliminarMonta(id);
         return ResponseEntity.noContent().build();
     }

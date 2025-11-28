@@ -1,7 +1,9 @@
 package com.ganado.reproduccion.service;
 
 import com.ganado.reproduccion.dto.GestacionRequest;
+import com.ganado.reproduccion.dto.GestacionResponseDTO;
 import com.ganado.reproduccion.model.Gestacion;
+import com.ganado.reproduccion.mapper.GestacionMapper;
 import com.ganado.reproduccion.repository.GestacionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,49 +17,56 @@ public class GestacionService {
 
     private final GestacionRepository gestacionRepository;
 
-    public Gestacion crearGestacion(GestacionRequest request) {
-        Gestacion gestacion = Gestacion.builder()
-                .idMonta(request.getIdMonta())
-                .idHembra(request.getIdHembra())
-                .fechaInicio(request.getFechaInicio())
-                .fechaEstimadaParto(request.getFechaEstimadaParto())
-                .estado(request.getEstado() != null
-                        ? Gestacion.EstadoGestacion.valueOf(request.getEstado().toUpperCase())
-                        : Gestacion.EstadoGestacion.ACTIVA)
-                .build();
-
-        return gestacionRepository.save(gestacion);
+    // Crear gestación
+    public GestacionResponseDTO crearGestacion(GestacionRequest request) {
+        Gestacion gestacion = GestacionMapper.toEntity(request);
+        gestacionRepository.save(gestacion);
+        return GestacionMapper.toDTO(gestacion);
     }
 
     // Listar todas las gestaciones
-    public List<Gestacion> listarTodas() {
-        return gestacionRepository.findAll();
+    public List<GestacionResponseDTO> listarTodas() {
+        return gestacionRepository.findAll()
+                .stream()
+                .map(GestacionMapper::toDTO)
+                .toList();
     }
 
-    // Buscar por ID
-    public Gestacion buscarPorId(UUID id) {
-        return gestacionRepository.findById(id)
+    // Buscar gestación por ID
+    public GestacionResponseDTO buscarPorId(UUID id) {
+        Gestacion gestacion = gestacionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Gestación no encontrada"));
+        return GestacionMapper.toDTO(gestacion);
     }
 
-    // Buscar por hembra
-    public List<Gestacion> buscarPorHembra(UUID idHembra) {
-        return gestacionRepository.findByIdHembra(idHembra);
+    // Buscar gestaciones por hembra
+    public List<GestacionResponseDTO> buscarPorHembra(UUID idHembra) {
+        return gestacionRepository.findByIdHembra(idHembra)
+                .stream()
+                .map(GestacionMapper::toDTO)
+                .toList();
     }
 
     // Actualizar gestación
-    public Gestacion actualizar(UUID id, Gestacion gestacionActualizada) {
-        Gestacion gestacion = buscarPorId(id);
+    public GestacionResponseDTO actualizar(UUID id, GestacionRequest request) {
+        Gestacion gestacion = gestacionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Gestación no encontrada"));
 
-        gestacion.setFechaInicio(gestacionActualizada.getFechaInicio());
-        gestacion.setFechaEstimadaParto(gestacionActualizada.getFechaEstimadaParto());
-        gestacion.setEstado(gestacionActualizada.getEstado());
+        gestacion.setFechaInicio(request.getFechaInicio());
+        gestacion.setFechaEstimadaParto(request.getFechaEstimadaParto());
+        if (request.getEstado() != null) {
+            gestacion.setEstado(Gestacion.EstadoGestacion.valueOf(request.getEstado().toUpperCase()));
+        }
 
-        return gestacionRepository.save(gestacion);
+        gestacionRepository.save(gestacion);
+        return GestacionMapper.toDTO(gestacion);
     }
 
     // Eliminar gestación
     public void eliminar(UUID id) {
+        if (!gestacionRepository.existsById(id)) {
+            throw new IllegalArgumentException("Gestación no encontrada");
+        }
         gestacionRepository.deleteById(id);
     }
 }

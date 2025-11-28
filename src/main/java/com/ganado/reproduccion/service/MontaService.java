@@ -2,6 +2,7 @@ package com.ganado.reproduccion.service;
 
 import com.ganado.reproduccion.dto.MontaRequest;
 import com.ganado.reproduccion.dto.MontaResponseDTO;
+import com.ganado.reproduccion.mapper.MontaMapper;
 import com.ganado.reproduccion.model.Monta;
 import com.ganado.reproduccion.repository.MontaRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,87 +18,60 @@ public class MontaService {
 
     private final MontaRepository montaRepository;
 
-    //private final AnimalClient animalClient; // Cliente para validar animales externos
+    // Registrar una nueva Monta
+    public MontaResponseDTO registrarMonta(MontaRequest request) {
 
-    public Monta registrarMonta(MontaRequest request) {
-
-        // 1. Validar existencia del animal (microservicio externo)
-        /*if (!animalClient.existeAnimal(request.getIdHembra())) {
-            throw new IllegalArgumentException("La hembra no existe en el sistema.");
-        }
-        if (!animalClient.existeAnimal(request.getIdMacho())) {
-            throw new IllegalArgumentException("El macho no existe en el sistema.");
-        }*/
-
-        // 2. Validar que la hembra no tenga una monta activa
+        // Validar que la hembra no tenga una monta activa
         if (montaRepository.existsByIdHembraAndEstado(request.getIdHembra(), Monta.EstadoMonta.ACTIVA)) {
             throw new IllegalStateException("La hembra ya tiene una monta activa.");
         }
 
-        // 3. Crear la monta
-        Monta monta = Monta.builder()
-                //.id(UUID.randomUUID())
-                .idHembra(request.getIdHembra())
-                .idMacho(request.getIdMacho())
-                .fecha(request.getFecha())
-                .metodoUtilizado(request.getMetodoUtilizado())
-                .notas(request.getNotas())
-                .estado(Monta.EstadoMonta.ACTIVA)
-                .build();
+        // Crear la Monta usando el mapper
+        Monta monta = MontaMapper.toEntity(request);
 
-        return montaRepository.save(monta);
+        // Guardar en BD
+        monta = montaRepository.save(monta);
+
+        // Devolver DTO
+        return MontaMapper.toDTO(monta);
     }
 
-    // READ (por id)
+    // Obtener por ID
     public MontaResponseDTO obtenerPorId(UUID id) {
         Monta monta = montaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Monta no encontrada"));
 
-        return toDTO(monta);
+        return MontaMapper.toDTO(monta);
     }
 
-    // READ (todos)
+    // Obtener todas las Montas
     public List<MontaResponseDTO> obtenerTodos() {
-        return montaRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .toList();
+        return MontaMapper.toDTOList(montaRepository.findAll());
     }
 
-    // UPDATE
+    // Actualizar Monta
     public MontaResponseDTO actualizarMonta(UUID id, MontaRequest request) {
         Monta monta = montaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Monta no encontrada"));
 
+        // Actualizar campos
         monta.setIdHembra(request.getIdHembra());
         monta.setIdMacho(request.getIdMacho());
         monta.setFecha(request.getFecha());
         monta.setMetodoUtilizado(request.getMetodoUtilizado());
         monta.setNotas(request.getNotas());
 
+        // Guardar cambios
         montaRepository.save(monta);
-        return toDTO(monta);
+
+        return MontaMapper.toDTO(monta);
     }
 
-    // DELETE
+    // Eliminar Monta
     public void eliminarMonta(UUID id) {
         if (!montaRepository.existsById(id)) {
             throw new NoSuchElementException("Monta no encontrada");
         }
         montaRepository.deleteById(id);
     }
-
-    // Convertir entity → DTO
-    private MontaResponseDTO toDTO(Monta m) {
-        return MontaResponseDTO.builder()
-                .id(m.getId())
-                .idHembra(m.getIdHembra())
-                .idMacho(m.getIdMacho())
-                .fecha(m.getFecha())
-                .metodoUtilizado(m.getMetodoUtilizado())
-                .notas(m.getNotas())
-                .estado(m.getEstado())
-                .build();
-    }
-
 }

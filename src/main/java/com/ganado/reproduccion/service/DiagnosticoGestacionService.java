@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -68,4 +69,39 @@ public class DiagnosticoGestacionService {
             default -> 280;
         };
     }
+
+
+
+
+    public List<DiagnosticoGestacion> obtenerTodos() {
+        return diagnosticoGestacionRepository.findAll();
+    }
+
+    public DiagnosticoGestacion obtenerPorId(UUID id) {
+        return diagnosticoGestacionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Diagnóstico no encontrado"));
+    }
+
+    public List<DiagnosticoGestacion> obtenerPorMonta(UUID idMonta) {
+        return diagnosticoGestacionRepository.findByIdMonta(idMonta);
+    }
+
+    public DiagnosticoGestacion actualizar(UUID id, DiagnosticoGestacionRequest request) {
+        DiagnosticoGestacion existente = diagnosticoGestacionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Diagnóstico no encontrado"));
+
+        existente.setFecha(request.getFecha());
+        existente.setResultado(request.getResultado());
+        existente.setObservaciones(request.getObservaciones());
+
+        // No tocamos la lógica de gestación, solo actualizamos el diagnóstico
+        return diagnosticoGestacionRepository.save(existente);
+    }
+
+    public void eliminar(UUID id) {
+        diagnosticoGestacionRepository.deleteById(id);
+    }
+
+
+
 }

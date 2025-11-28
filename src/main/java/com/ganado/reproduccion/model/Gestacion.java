@@ -5,19 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "diagnosticos_gestacion")
+@Table(name = "gestaciones")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DiagnosticoGestacion {
+public class Gestacion {
 
     @Id
     @GeneratedValue
@@ -27,17 +25,21 @@ public class DiagnosticoGestacion {
     private UUID idMonta;
 
     @Column(nullable = false)
-    private LocalDate fecha;
+    private UUID idHembra;
 
-    private String observaciones;
+    @Column(nullable = false)
+    private LocalDate fechaInicio;
+
+    @Column(nullable = false)
+    private LocalDate fechaEstimadaParto;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Resultado resultado; // GESTANTE / VACIA / NO_CONCLUYENTE
+    private EstadoGestacion estado = EstadoGestacion.ACTIVA;
 
-    public enum Resultado {
-        GESTANTE,
-        VACIA,
-        NO_CONCLUYENTE
+    public enum EstadoGestacion {
+        ACTIVA,
+        CERRADA
     }
+
 }

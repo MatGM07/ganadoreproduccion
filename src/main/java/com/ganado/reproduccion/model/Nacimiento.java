@@ -20,26 +20,33 @@ import java.util.UUID;
 public class Nacimiento {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @GeneratedValue
     private UUID id;
 
-    @Column(name = "id_gestacion", nullable = false)
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @Column(nullable = false)
     private UUID idGestacion;
 
     @Column(nullable = false)
     private LocalDate fecha;
 
-    @Column(name = "id_animal", nullable = false)
-    @JdbcTypeCode(SqlTypes.BINARY)
-    private UUID idAnimal;
+    @Column(nullable = false)
+    private UUID idAnimal;   // viene del microservicio de animales
 
     @Column(nullable = false)
+    private UUID idMadre;
+
+    @Column(nullable = false)
+    private UUID idPadre;
+
     private Double peso;
 
-    @Column(nullable = false)
-    private String sexo; // MACHO / HEMBRA
+    @Enumerated(EnumType.STRING)
+    private Sexo sexo;
 
     private String observaciones;
+
+    public enum Sexo {
+        MACHO,
+        HEMBRA
+    }
 }

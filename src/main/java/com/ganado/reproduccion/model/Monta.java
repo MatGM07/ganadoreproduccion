@@ -21,23 +21,29 @@ import java.util.UUID;
 public class Monta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @GeneratedValue
     private UUID id;
 
-    @Column(name = "id_hembra", nullable = false)
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @Column(nullable = false)
     private UUID idHembra;
 
-    @Column(name = "id_macho")
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @Column(nullable = false)
     private UUID idMacho;
 
     @Column(nullable = false)
     private LocalDate fecha;
 
-    @Column(nullable = false)
     private String metodoUtilizado;
 
     private String notas;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoMonta estado = EstadoMonta.ACTIVA; // ACTIVA / FINALIZADA
+
+    public enum EstadoMonta {
+        ACTIVA,
+        FINALIZADA
+    }
+
 }

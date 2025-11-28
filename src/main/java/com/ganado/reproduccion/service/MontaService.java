@@ -1,11 +1,14 @@
 package com.ganado.reproduccion.service;
 
 import com.ganado.reproduccion.dto.MontaRequest;
+import com.ganado.reproduccion.dto.MontaResponseDTO;
 import com.ganado.reproduccion.model.Monta;
 import com.ganado.reproduccion.repository.MontaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -44,4 +47,57 @@ public class MontaService {
 
         return montaRepository.save(monta);
     }
+
+    // READ (por id)
+    public MontaResponseDTO obtenerPorId(UUID id) {
+        Monta monta = montaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Monta no encontrada"));
+
+        return toDTO(monta);
+    }
+
+    // READ (todos)
+    public List<MontaResponseDTO> obtenerTodos() {
+        return montaRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    // UPDATE
+    public MontaResponseDTO actualizarMonta(UUID id, MontaRequest request) {
+        Monta monta = montaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Monta no encontrada"));
+
+        monta.setIdHembra(request.getIdHembra());
+        monta.setIdMacho(request.getIdMacho());
+        monta.setFecha(request.getFecha());
+        monta.setMetodoUtilizado(request.getMetodoUtilizado());
+        monta.setNotas(request.getNotas());
+
+        montaRepository.save(monta);
+        return toDTO(monta);
+    }
+
+    // DELETE
+    public void eliminarMonta(UUID id) {
+        if (!montaRepository.existsById(id)) {
+            throw new NoSuchElementException("Monta no encontrada");
+        }
+        montaRepository.deleteById(id);
+    }
+
+    // Convertir entity → DTO
+    private MontaResponseDTO toDTO(Monta m) {
+        return MontaResponseDTO.builder()
+                .id(m.getId())
+                .idHembra(m.getIdHembra())
+                .idMacho(m.getIdMacho())
+                .fecha(m.getFecha())
+                .metodoUtilizado(m.getMetodoUtilizado())
+                .notas(m.getNotas())
+                .estado(m.getEstado())
+                .build();
+    }
+
 }

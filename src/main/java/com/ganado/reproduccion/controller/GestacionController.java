@@ -6,10 +6,10 @@ import com.ganado.reproduccion.model.Gestacion;
 import com.ganado.reproduccion.service.GestacionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/gestaciones")
@@ -31,5 +31,30 @@ public class GestacionController {
         response.setEstado(gestacion.getEstado());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public List<Gestacion> listarTodas() {
+        return gestacionService.listarTodas();
+    }
+
+    @GetMapping("/{id}")
+    public Gestacion buscarPorId(@PathVariable UUID id) {
+        return gestacionService.buscarPorId(id);
+    }
+
+    @GetMapping("/hembra/{idHembra}")
+    public List<Gestacion> buscarPorHembra(@PathVariable UUID idHembra) {
+        return gestacionService.buscarPorHembra(idHembra);
+    }
+
+    @PutMapping("/{id}")
+    public Gestacion actualizar(@PathVariable UUID id, @RequestBody Gestacion gestacionActualizada) {
+        return gestacionService.actualizar(id, gestacionActualizada);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable UUID id) {
+        gestacionService.eliminar(id);
     }
 }

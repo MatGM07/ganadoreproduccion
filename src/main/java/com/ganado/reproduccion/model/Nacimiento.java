@@ -25,6 +25,9 @@ public class Nacimiento {
     private UUID idMadre;
 
     @Column(nullable = false)
+    private UUID idAnimal;
+
+    @Column(nullable = false)
     private LocalDate fecha;
 
     private String sexo; // MACHO / HEMBRA

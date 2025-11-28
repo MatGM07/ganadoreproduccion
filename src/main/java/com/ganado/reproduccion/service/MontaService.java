@@ -69,9 +69,14 @@ public class MontaService {
 
     // Eliminar Monta
     public void eliminarMonta(UUID id) {
-        if (!montaRepository.existsById(id)) {
-            throw new NoSuchElementException("Monta no encontrada");
-        }
-        montaRepository.deleteById(id);
+        Monta monta = montaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Monta no encontrada"));
+
+        // Actualizar campos
+        monta.setEstado(Monta.EstadoMonta.FINALIZADA);
+
+        // Guardar cambios
+        montaRepository.save(monta);
+
     }
 }

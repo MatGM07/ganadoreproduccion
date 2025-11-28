@@ -22,6 +22,7 @@ public class DiagnosticoGestacionService {
 
     private final DiagnosticoGestacionRepository diagnosticoGestacionRepository;
     private final GestacionRepository gestacionRepository;
+    private final MontaService montaService;
     private final MontaRepository montaRepository;
 
     public DiagnosticoGestacionResponseDTO registrarDiagnostico(DiagnosticoGestacionRequest request) {
@@ -34,6 +35,10 @@ public class DiagnosticoGestacionService {
             UUID idHembra = obtenerIdHembraDeMonta(request.getIdMonta());
             Gestacion gestacion = DiagnosticoGestacionMapper.toGestacion(request, idHembra);
             gestacionRepository.save(gestacion);
+        }
+
+        if (request.getResultado() == DiagnosticoGestacion.Resultado.VACIA) {
+            montaService.eliminarMonta(request.getIdMonta());
         }
 
         return DiagnosticoGestacionMapper.toDTO(diagnostico);

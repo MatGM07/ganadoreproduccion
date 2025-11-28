@@ -19,6 +19,7 @@ public class Gestacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+
     private UUID id;
 
     @Column(nullable = false)
